@@ -10,25 +10,27 @@ import styles from './Select.module.scss';
 
 type OptionProps = {
 	option: OptionType;
-	onClick: (value: OptionType['value']) => void;
+	onClick: () => void;
+	selected?: OptionType | null;
+	isColorSelect?: boolean;
 };
 
 export const Option = (props: OptionProps) => {
 	const {
 		option: { value, title, optionClassName, className },
 		onClick,
+		selected,
+		isColorSelect,
 	} = props;
 	const optionRef = useRef<HTMLLIElement>(null);
+	const isSelected = selected?.value === value;
 
-	const handleClick =
-		(clickedValue: OptionType['value']): MouseEventHandler<HTMLLIElement> =>
-		() => {
-			onClick(clickedValue);
-		};
+	const handleClick: MouseEventHandler<HTMLLIElement> = () => {
+		onClick();
+	};
 
 	useEnterOptionSubmit({
 		optionRef,
-		value,
 		onClick,
 	});
 
@@ -36,10 +38,15 @@ export const Option = (props: OptionProps) => {
 		<li
 			className={clsx(styles.option, styles[optionClassName || ''])}
 			value={value}
-			onClick={handleClick(value)}
+			onClick={handleClick}
 			tabIndex={0}
 			data-testid={`select-option-${value}`}
+			data-selected={isSelected}
+			data-color-select={isColorSelect}
 			ref={optionRef}>
+			{isColorSelect && isSelected && (
+				<div className={styles.colorStripeOverlay} />
+			)}
 			<Text family={isFontFamilyClass(className) ? className : undefined}>
 				{title}
 			</Text>
