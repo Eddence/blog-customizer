@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import clsx from 'clsx';
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
@@ -55,54 +55,75 @@ export const ArticleParamsForm = ({
 		};
 	}, [isOpen]);
 
-	const handleToggleSidebar = () => {
+	const handleToggleSidebar = useCallback(() => {
 		setIsOpen((prev) => !prev);
-	};
+	}, []);
 
-	const handleFontFamilyChange = (option: OptionType) => {
-		onFormStateChange({
-			...formState,
-			fontFamilyOption: option as (typeof fontFamilyOptions)[number],
-		});
-	};
+	const handleFontFamilyChange = useCallback(
+		(option: OptionType) => {
+			onFormStateChange({
+				...formState,
+				fontFamilyOption: option as (typeof fontFamilyOptions)[number],
+			});
+		},
+		[formState, onFormStateChange]
+	);
 
-	const handleFontSizeChange = (option: OptionType) => {
-		onFormStateChange({
-			...formState,
-			fontSizeOption: option as (typeof fontSizeOptions)[number],
-		});
-	};
+	const handleFontSizeChange = useCallback(
+		(option: OptionType) => {
+			onFormStateChange({
+				...formState,
+				fontSizeOption: option as (typeof fontSizeOptions)[number],
+			});
+		},
+		[formState, onFormStateChange]
+	);
 
-	const handleFontColorChange = (option: OptionType) => {
-		onFormStateChange({
-			...formState,
-			fontColor: option as (typeof fontColors)[number],
-		});
-	};
+	const handleFontColorChange = useCallback(
+		(option: OptionType) => {
+			onFormStateChange({
+				...formState,
+				fontColor: option as (typeof fontColors)[number],
+			});
+		},
+		[formState, onFormStateChange]
+	);
 
-	const handleBackgroundColorChange = (option: OptionType) => {
-		onFormStateChange({
-			...formState,
-			backgroundColor: option as (typeof backgroundColors)[number],
-		});
-	};
+	const handleBackgroundColorChange = useCallback(
+		(option: OptionType) => {
+			onFormStateChange({
+				...formState,
+				backgroundColor: option as (typeof backgroundColors)[number],
+			});
+		},
+		[formState, onFormStateChange]
+	);
 
-	const handleContentWidthChange = (option: OptionType) => {
-		onFormStateChange({
-			...formState,
-			contentWidth: option as (typeof contentWidthArr)[number],
-		});
-	};
+	const handleContentWidthChange = useCallback(
+		(option: OptionType) => {
+			onFormStateChange({
+				...formState,
+				contentWidth: option as (typeof contentWidthArr)[number],
+			});
+		},
+		[formState, onFormStateChange]
+	);
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		onApply();
-	};
+	const handleSubmit = useCallback(
+		(event: React.FormEvent<HTMLFormElement>) => {
+			event.preventDefault();
+			onApply();
+		},
+		[onApply]
+	);
 
-	const handleReset = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		onReset();
-	};
+	const handleReset = useCallback(
+		(event: React.FormEvent<HTMLFormElement>) => {
+			event.preventDefault();
+			onReset();
+		},
+		[onReset]
+	);
 
 	return (
 		<>
