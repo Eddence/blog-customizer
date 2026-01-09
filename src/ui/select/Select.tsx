@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo } from 'react';
+import { useState, useRef } from 'react';
 import type { MouseEventHandler } from 'react';
 import clsx from 'clsx';
 import { OptionType } from 'src/constants/articleProps';
@@ -34,17 +34,7 @@ export const Select = (props: SelectProps) => {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const rootRef = useRef<HTMLDivElement>(null);
 	const placeholderRef = useRef<HTMLDivElement>(null);
-
-	const optionClassName = useMemo(
-		() => selected?.optionClassName ?? '',
-		[selected?.optionClassName]
-	);
-
-	const fontFamily = useMemo(
-		() =>
-			isFontFamilyClass(selected?.className) ? selected?.className : undefined,
-		[selected?.className]
-	);
+	const optionClassName = selected?.optionClassName ?? '';
 
 	useOutsideClickClose({
 		isOpen,
@@ -58,25 +48,22 @@ export const Select = (props: SelectProps) => {
 		onChange: setIsOpen,
 	});
 
-	const handleOptionClick = useCallback(
-		(option: OptionType) => {
-			setIsOpen(false);
-			onChange?.(option);
-		},
-		[onChange]
-	);
-
-	const handlePlaceHolderClick: MouseEventHandler<HTMLDivElement> =
-		useCallback(() => {
-			setIsOpen((isOpen) => !isOpen);
-		}, []);
+	const handleOptionClick = (option: OptionType) => {
+		setIsOpen(false);
+		onChange?.(option);
+	};
+	const handlePlaceHolderClick: MouseEventHandler<HTMLDivElement> = () => {
+		setIsOpen((isOpen) => !isOpen);
+	};
 
 	return (
 		<div className={styles.container}>
 			{title && (
-				<Text size={12} weight={800} uppercase>
-					{title}
-				</Text>
+				<>
+					<Text size={12} weight={800} uppercase>
+						{title}
+					</Text>
+				</>
 			)}
 			<div
 				className={styles.selectWrapper}
@@ -94,7 +81,14 @@ export const Select = (props: SelectProps) => {
 					role='button'
 					tabIndex={0}
 					ref={placeholderRef}>
-					<Text family={fontFamily}>{selected?.title || placeholder}</Text>
+					<Text
+						family={
+							isFontFamilyClass(selected?.className)
+								? selected?.className
+								: undefined
+						}>
+						{selected?.title || placeholder}
+					</Text>
 				</div>
 				{isOpen && (
 					<ul className={styles.select} data-testid='selectDropdown'>

@@ -1,4 +1,4 @@
-import { useRef, memo } from 'react';
+import { useRef } from 'react';
 import type { MouseEventHandler } from 'react';
 import clsx from 'clsx';
 import { OptionType } from 'src/constants/articleProps';
@@ -15,7 +15,7 @@ type OptionProps = {
 	isColorSelect?: boolean;
 };
 
-export const Option = memo((props: OptionProps) => {
+export const Option = (props: OptionProps) => {
 	const {
 		option: { value, title, optionClassName, className },
 		onClick,
@@ -52,6 +52,4 @@ export const Option = memo((props: OptionProps) => {
 			</Text>
 		</li>
 	);
-});
-
-Option.displayName = 'Option';
+};
