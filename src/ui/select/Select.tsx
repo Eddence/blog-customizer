@@ -18,19 +18,10 @@ type SelectProps = {
 	onChange?: (selected: OptionType) => void;
 	onClose?: () => void;
 	title?: string;
-	isColorSelect?: boolean;
 };
 
 export const Select = (props: SelectProps) => {
-	const {
-		options,
-		placeholder,
-		selected,
-		onChange,
-		onClose,
-		title,
-		isColorSelect,
-	} = props;
+	const { options, placeholder, selected, onChange, onClose, title } = props;
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const rootRef = useRef<HTMLDivElement>(null);
 	const placeholderRef = useRef<HTMLDivElement>(null);
@@ -76,6 +67,7 @@ export const Select = (props: SelectProps) => {
 						styles.placeholder,
 						(styles as Record<string, string>)[optionClassName]
 					)}
+					data-status={status}
 					data-selected={!!selected?.value}
 					onClick={handlePlaceHolderClick}
 					role='button'
@@ -92,15 +84,15 @@ export const Select = (props: SelectProps) => {
 				</div>
 				{isOpen && (
 					<ul className={styles.select} data-testid='selectDropdown'>
-						{options.map((option) => (
-							<Option
-								key={option.value}
-								option={option}
-								selected={selected}
-								isColorSelect={isColorSelect}
-								onClick={() => handleOptionClick(option)}
-							/>
-						))}
+						{options
+							.filter((option) => selected?.value !== option.value)
+							.map((option) => (
+								<Option
+									key={option.value}
+									option={option}
+									onClick={() => handleOptionClick(option)}
+								/>
+							))}
 					</ul>
 				)}
 			</div>
