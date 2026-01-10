@@ -9,6 +9,7 @@ import { Text } from 'src/ui/text';
 import {
 	ArticleStateType,
 	OptionType,
+	defaultArticleState,
 	fontFamilyOptions,
 	fontSizeOptions,
 	fontColors,
@@ -19,32 +20,27 @@ import {
 import styles from './ArticleParamsForm.module.scss';
 
 type ArticleParamsFormProps = {
-	formState: ArticleStateType;
-	onFormStateChange: (newState: ArticleStateType) => void;
-	onApply: () => void;
-	onReset: () => void;
+	onApply: (state: ArticleStateType) => void;
 };
 
-export const ArticleParamsForm = ({
-	formState,
-	onFormStateChange,
-	onApply,
-	onReset,
-}: ArticleParamsFormProps) => {
-	const [isOpen, setIsOpen] = useState<boolean>(false);
+export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
+	const [formState, setFormState] =
+		useState<ArticleStateType>(defaultArticleState);
+	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 	const sidebarRef = useRef<HTMLElement>(null);
 	const arrowButtonRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
+		if (!isMenuOpen) return;
+
 		const handleClick = (event: MouseEvent) => {
 			const { target } = event;
 			if (
 				target instanceof Node &&
 				!sidebarRef.current?.contains(target) &&
-				!arrowButtonRef.current?.contains(target) &&
-				isOpen
+				!arrowButtonRef.current?.contains(target)
 			) {
-				setIsOpen(false);
+				setIsMenuOpen(false);
 			}
 		};
 
@@ -53,87 +49,73 @@ export const ArticleParamsForm = ({
 		return () => {
 			window.removeEventListener('mousedown', handleClick);
 		};
-	}, [isOpen]);
+	}, [isMenuOpen]);
 
 	const handleToggleSidebar = useCallback(() => {
-		setIsOpen((prev) => !prev);
+		setIsMenuOpen((prev) => !prev);
 	}, []);
 
-	const handleFontFamilyChange = useCallback(
-		(option: OptionType) => {
-			onFormStateChange({
-				...formState,
-				fontFamilyOption: option as (typeof fontFamilyOptions)[number],
-			});
-		},
-		[formState, onFormStateChange]
-	);
+	const handleFontFamilyChange = useCallback((option: OptionType) => {
+		setFormState((prev) => ({
+			...prev,
+			fontFamilyOption: option as (typeof fontFamilyOptions)[number],
+		}));
+	}, []);
 
-	const handleFontSizeChange = useCallback(
-		(option: OptionType) => {
-			onFormStateChange({
-				...formState,
-				fontSizeOption: option as (typeof fontSizeOptions)[number],
-			});
-		},
-		[formState, onFormStateChange]
-	);
+	const handleFontSizeChange = useCallback((option: OptionType) => {
+		setFormState((prev) => ({
+			...prev,
+			fontSizeOption: option as (typeof fontSizeOptions)[number],
+		}));
+	}, []);
 
-	const handleFontColorChange = useCallback(
-		(option: OptionType) => {
-			onFormStateChange({
-				...formState,
-				fontColor: option as (typeof fontColors)[number],
-			});
-		},
-		[formState, onFormStateChange]
-	);
+	const handleFontColorChange = useCallback((option: OptionType) => {
+		setFormState((prev) => ({
+			...prev,
+			fontColor: option as (typeof fontColors)[number],
+		}));
+	}, []);
 
-	const handleBackgroundColorChange = useCallback(
-		(option: OptionType) => {
-			onFormStateChange({
-				...formState,
-				backgroundColor: option as (typeof backgroundColors)[number],
-			});
-		},
-		[formState, onFormStateChange]
-	);
+	const handleBackgroundColorChange = useCallback((option: OptionType) => {
+		setFormState((prev) => ({
+			...prev,
+			backgroundColor: option as (typeof backgroundColors)[number],
+		}));
+	}, []);
 
-	const handleContentWidthChange = useCallback(
-		(option: OptionType) => {
-			onFormStateChange({
-				...formState,
-				contentWidth: option as (typeof contentWidthArr)[number],
-			});
-		},
-		[formState, onFormStateChange]
-	);
+	const handleContentWidthChange = useCallback((option: OptionType) => {
+		setFormState((prev) => ({
+			...prev,
+			contentWidth: option as (typeof contentWidthArr)[number],
+		}));
+	}, []);
 
 	const handleSubmit = useCallback(
 		(event: React.FormEvent<HTMLFormElement>) => {
 			event.preventDefault();
-			onApply();
+			onApply(formState);
 		},
-		[onApply]
+		[formState, onApply]
 	);
 
 	const handleReset = useCallback(
 		(event: React.FormEvent<HTMLFormElement>) => {
 			event.preventDefault();
-			onReset();
+			setFormState(defaultArticleState);
+			onApply(defaultArticleState);
 		},
-		[onReset]
+		[onApply]
 	);
 
 	return (
 		<>
 			<div ref={arrowButtonRef}>
-				<ArrowButton isOpen={isOpen} onClick={handleToggleSidebar} />
+				<ArrowButton isOpen={isMenuOpen} onClick={handleToggleSidebar} />
 			</div>
 			<aside
 				ref={sidebarRef}
 				className={clsx(styles.container, {
-					[styles.container_open]: isOpen,
+					[styles.container_open]: isMenuOpen,
 				})}>
 				<form
 					className={styles.form}
