@@ -14,7 +14,9 @@
 }
 
 .image {
-	width: 100%;
-	height: auto;
+	width: var(--image-width, 100%);
+	height: var(--image-height, auto);
 	margin-top: 26px;
+	object-fit: cover;
+	object-position: center;
 }
